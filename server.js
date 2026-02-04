@@ -1,5 +1,8 @@
 import app from "./app.js"
 
-app.listen(8080,(err,data)=>{
-    console.log("Listening on PORT 8080");
+const PORT = 8080 || process.env.PORT; 
+
+
+app.listen(PORT,(err,data)=>{
+    console.log(`Listening on PORT ${PORT}`);
 })
