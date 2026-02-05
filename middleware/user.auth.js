@@ -14,6 +14,7 @@ export const verifyToken= (req,res,next)=>{
 // checkAuth
 let success = true;
 export const checkAuth = (req,res,next)=>{
+    console.log("req:", req.headers);
     console.log("auth")
     if(success){
         console.log("Auth Checked");
@@ -26,21 +27,6 @@ export const checkAuth = (req,res,next)=>{
         })
     }
 }
-
-// // validate user DTO
-// export const validateUserDTO =(req,res,next) =>{
-    //         const {name, email} = req.body;  
-//         if(!name || !email){
-//             return res.status(400).json({
-//                 sucess:false,
-//                 message:"Name and email are required." 
-//             });
-//         }
-//         console.log("Valid Data.")
-//         next();
-// }
-
-
 
 // validate user by id from params
 export const validateUserId =(req,res,next) =>{

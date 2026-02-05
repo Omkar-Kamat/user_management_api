@@ -1,5 +1,5 @@
 import {users} from "../data/users.js"
-import { createUser, updateCompleteUser } from "../services/user.service.js";
+import { createUser, updateCompleteUser, updatePartialUser, deleteUser } from "../services/user.service.js";
 //create user
 export let postUser = (req,res)=>{
         console.log("Controller")
@@ -44,60 +44,23 @@ export let getUserById = (req,res)=>{
 
 // update user partially
 export let patchUser = (req,res)=>{
-    try{
-        const {id} = req.params;
-        const { name, email } = req.body;
-
-        let user = users.find(user => user.id == id);
-        if(!user){
-            return res.status(404).json({
-                success: false,
-                message: "User not found"
-            })
-        }   
-        if(name) user.name = name;
-        if(email) user.email = email;
-        
-        res.status(200).json({
-            success: true,
-            data: user
-        })
-    }catch(error){
-        res.status(500).json({
-            success: false,
-            data: error.message
-        })
-    }
+    const {id} = req.params;
+    const { name, email } = req.body;
+    let update = updatePartialUser(id,name,email);
+    return res.status(update.status).json(update);
 }
 
 
 // delete user
-export let deleteUser = (req,res)=>{
-    try{
-        const { id } = req.params;
-    
-        let index = users.findIndex(user => user.id == id);
-        
-        if(index == -1){
-            return res.status(404).json({
-                success: false,
-                message: "User not found"
-            })
-        }   
-        
-        users.splice(index,1);
-        
-        res.status(200).json({
-            success: true,
-            message: "User Deleted."
-        })
-    }catch(error){
-        res.status(500).json({
-            success: false,
-            data: error.message
-        })
-    }
+export let deleteUserById = (req,res)=>{
+    console.log("Controller")
+    const {id} = req.params
+    let deleted = deleteUser(id);
+    return res.status(deleted.status).json(deleted);
 }
+
+
+//put user
 export let putUser = (req,res)=>{
     console.log("Controller")
     const {id} = req.params
