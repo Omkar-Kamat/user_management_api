@@ -1,36 +1,11 @@
 import {users} from "../data/users.js"
-
+import { createUser, updateCompleteUser } from "../services/user.service.js";
 //create user
 export let postUser = (req,res)=>{
-    try{
-        const {name, email} = req.body;
-        
-        // validation
-        if(!name || !email){
-            return res.status(400).json({
-                sucess:false,
-                message:"Name and email are required." 
-            });
-        }
-
-        const newUser = {
-            id: Date.now().toString(),
-            name,
-            email
-        }
-
-        users.push(newUser);
-
-        res.status(201).json({
-            success: true,
-            data: newUser
-        });
-    }catch(error){
-        res.status(500).json({
-            success: false,
-            data: error.message
-        });
-    }
+        console.log("Controller")
+        const { name, email } = req.body;
+        let created = createUser (name, email);
+        res.status(created.status).json(created);
 }
 
 // get users
@@ -40,6 +15,30 @@ export let getUsers = (req,res)=>{
         count: users.length,
         users: users
     })
+}
+
+// get user by id
+export let getUserById = (req,res)=>{
+     try{
+        const {id} = req.body;
+
+        let user = users.find(user => user.id == id);
+        if(!user){
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            })
+        } 
+        res.status(200).json({
+            success: true,
+            data: user
+        })
+    }catch(error){
+        res.status(500).json({
+            success: false,
+            data: error.message
+        })
+    }
 }
 
 
@@ -100,30 +99,9 @@ export let deleteUser = (req,res)=>{
     }
 }
 export let putUser = (req,res)=>{
-    try{
-        const {id} = req.params;
-        const { name, email } = req.body;
-    
-        let user = users.find(user => user.id == id);
-        
-        if(!user){
-            return res.status(404).json({
-                success: false,
-                message: "User not found"
-            })
-        }
-
-        user.name = name;
-        user.email = email;
-        
-        res.status(200).json({
-            success: true,
-            data: user
-        })
-    }catch(error){
-        res.status(500).json({
-            success: false,
-            data: error.message
-        })
-    }
+    console.log("Controller")
+    const {id} = req.params
+    const {name, email} = req.body
+    let update = updateCompleteUser(id,name,email);
+    return res.status(update.status).json(update);
 }
