@@ -10,15 +10,12 @@ export const verifyToken= (req,res,next)=>{
     next();
 }
 
-
 // checkAuth
 let success = true;
 export const checkAuth = (req,res,next)=>{
-    console.log("req:", req.headers);
     console.log("auth")
     if(success){
         console.log("Auth Checked");
-        next();
     }else{
         console.log("Auth Failed");
         return res.status(400).json({
@@ -26,6 +23,7 @@ export const checkAuth = (req,res,next)=>{
             message: "Auth Failed."
         })
     }
+    next();
 }
 
 // validate user by id from params
@@ -41,11 +39,11 @@ export const validateUserId =(req,res,next) =>{
         }
         console.log("Valid ID")
         next();
-    }
+}
 
     
     // validate user by id from body
-    export const validateUserIdFromBody =(req,res,next) =>{
+export const validateUserIdFromBody =(req,res,next) =>{
         console.log("auth")
         const { id } = req.body;
         
@@ -57,4 +55,22 @@ export const validateUserId =(req,res,next) =>{
         }
         console.log("Valid ID")
         next();
+}
+
+
+
+// validate schema
+export const validateSchema = (schema) => (req,res,next) =>{
+    try{
+        console.log("schema")
+        let result = schema.safeParse(req.body);
+        if(!result.success) throw new Error("Schema Not Valid.")
+        req.body = result.data;
+    }catch(err){
+        return res.status(400).json({
+            success: false,
+            error: err.message
+        })
+    }
+    next();
 }

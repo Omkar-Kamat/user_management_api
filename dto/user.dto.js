@@ -38,3 +38,4 @@ export const validatePatchUserDTO =(req,res,next) =>{
         console.log("Valid Data.")
         next();
 }
+

@@ -107,7 +107,50 @@ export let deleteUser = (id) =>{
         return {
             status: 500,
             success: false,
-            data: error.message
+            data: err.message
         }
     }
 } 
+
+
+// get user by id
+export const getUserByIdService = (id) =>{
+     try{
+        let user = users.find(user => user.id == id);
+        if(!user){
+            return {
+                status: 404,
+                success: false,
+                message: "User not found"
+            }
+        } 
+        return {
+            status: 200,
+            success: true,
+            data: user
+        }
+    }catch(err){
+        return {
+            status: 500,
+            success: false,
+            message: err.message
+        }
+    }
+}
+
+// get all user
+export const getAllUser = () =>{
+     try{ 
+        return {
+            status: 200,
+            success: true,
+            data: users
+        }
+    }catch(err){
+        return {
+            status: 500,
+            success: false,
+            message: err.message
+        }
+    }
+}
