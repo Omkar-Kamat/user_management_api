@@ -1,156 +1,85 @@
-import {users} from "../data/users.js"
+import User from "../models/user.js"
 
-// create user logic
-export const createUser = (name,email) =>{
-    console.log("service")
-    try{
-        const newUser = {
-            id: Date.now().toString(),
-            name, 
-            email
-        }
-        users.push(newUser);
-        
-        return {
-            status:200,
-            success: true,
-                data: newUser
-            };
-    }catch(err){
-        return {
-                status:500,
-                success: false,
-                error: err.message
-            };
-    }
+
+
+// GET ALL USERS SERVICE
+export const getAllUsersService = async () =>{
+    console.log("GET ALL USERS SERVICE")
+    let users = await User.find().sort({age: 1});
+    return users;
 }
 
-
-// put user
-export let updateCompleteUser = (id,name,email) =>{
-    console.log("service")
-        try{      
-        let user = users.find(user => user.id == id);
-        
-        if(!user){
-            return {
-                status:404,
-                success: false,
-                message: "User not found"
-            }
-        }
-        
-        user.name = name;
-        user.email = email;
-        
-        return {
-            status:200,
-            success: true,
-            data: user
-        }
-    }catch(err){
-        return {
-            status: 500,
-            success: false,
-            message: err.message
-        }
-    }
+// GET USER BY EMAIL SERVICE
+export const getUserByEmailService = async (email) =>{
+    console.log("GET USER BY EMAIL SERVICE")
+    let user = await User.findOne({email: email});
+    return user;
 }
 
-
-// patch user
-export let updatePartialUser = (id,name,email) =>{
-    try{
-        let user = users.find(user => user.id == id);
-        if(!user){
-            return {
-                status:404,
-                success: false,
-                message: "User not found"
-            }
-        }   
-        if(name) user.name = name;
-        if(email) user.email = email;
-        
-        return {
-            status: 200,
-            success: true,
-            data: user
-        }
-    }catch(err){
-        return {
-            status: 500,
-            success: true,
-            message: err.message
-        }
-    }
+// GET IF USER IS ACTIVE BY EMAIL
+export const getIsActiveByEmailService = async (email) =>{
+    console.log("GET IF USER IS ACTIVE BY EMAIL")
+    let user = await User.findOne({email: email}).select("isActive");
+    if(!user) return null;
+    return user.isActive;
 }
 
-// delete user
-export let deleteUser = (id) =>{
-    try{
-        let index = users.findIndex(user => user.id == id);
-        if(index == -1){
-            return {
-                status: 404,
-                success: false,
-                message: "User not found"
-            }
-        }   
-        users.splice(index,1);
-        return {
-            status: 200,
-            success: true,
-            message: "User Deleted."
-        }
-    }catch(err){
-        return {
-            status: 500,
-            success: false,
-            data: err.message
-        }
+// GET ALL ACTIVE USERS
+export const getIsActiveAllUsersService = async () =>{
+    console.log("GET ALL ACTIVE USERS SERVICE")
+    let users = await User.find({isActive: true});
+    return users;
+}
+
+// POST NEW USER
+export const postUserService = async ({ name, email, age, password, role }) => {
+    console.log("POST NEW USER SERVICE")
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+        throw new Error("User already exists");
     }
+    
+    const user = await User.create({
+        name,
+        email,
+        age,
+        password,
+        role,
+    });
+    
+    return {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        age: user.age,
+        role: user.role,
+        isActive: user.isActive,
+        createdAt: user.createdAt,
+    };
+};
+
+// PATCH USER BY ID
+export const patchUserByIDService = async (id, updates) => {
+    console.log("PATCH USER BY ID SERVICE")
+    return await User.findByIdAndUpdate(
+        id,
+        { $set: updates },
+        {
+            new: true,
+            runValidators: true,
+            select: "-password",
+        }
+    );
+};
+
+// PATCH USER BY EMAIL
+export let patchUserByEmailService = async (email,updates) =>{
+    console.log("PATCH USER BY EMAIL SERVICE")
+    return await User.updateOne({email: email},updates);
+}
+
+// DELETE USER BY EMAIL
+export let deleteUserByEmailService = async (email) =>{
+    console.log("DELETE USER BY EMAIL SERVICE")
+    return await User.deleteOne({email: email});
 } 
-
-
-// get user by id
-export const getUserByIdService = (id) =>{
-     try{
-        let user = users.find(user => user.id == id);
-        if(!user){
-            return {
-                status: 404,
-                success: false,
-                message: "User not found"
-            }
-        } 
-        return {
-            status: 200,
-            success: true,
-            data: user
-        }
-    }catch(err){
-        return {
-            status: 500,
-            success: false,
-            message: err.message
-        }
-    }
-}
-
-// get all user
-export const getAllUser = () =>{
-     try{ 
-        return {
-            status: 200,
-            success: true,
-            data: users
-        }
-    }catch(err){
-        return {
-            status: 500,
-            success: false,
-            message: err.message
-        }
-    }
-}

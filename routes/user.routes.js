@@ -1,27 +1,36 @@
 import express from "express";
 import { 
+    getAllUsers, 
+    getUserByEmail,
+    getIsActiveByEmail,
+    getIsActiveAllUsers,
     postUser, 
-    getUsers, 
-    patchUser,
-    putUser, 
-    getUserById,
-    deleteUserById
+    patchUserByID,
+    patchUserByEmail,
+
+    deleteUserByEmail
 } from "../controller/userController.js";
+
 import { checkAuth, validateSchema, validateUserIdFromBody, verifyToken } from "../middleware/user.auth.js";
 import { validateCreateUserDTO, validatePatchUserDTO, validatePutUserDTO } from "../dto/user.dto.js";
 import { createUserSchema } from "../dto/user.zod.js";
 
 const router = express.Router()
 
-router.get("/",checkAuth,getUsers)
-router.get("/id/",validateUserIdFromBody,getUserById)
+router.get("/get-all-users",getAllUsers)
 
-router.post("/",validateSchema(createUserSchema),postUser)
+router.get("/email/get-user",getUserByEmail)
 
-router.patch("/:id",validatePatchUserDTO,patchUser)
+router.get("/email/is-active",getIsActiveByEmail)
 
-router.put("/:id",validatePutUserDTO,putUser)
+router.get("/is-active-all-users",getIsActiveAllUsers)
 
-router.delete("/:id",deleteUserById)
+router.post("/post-user",postUser)
+
+router.patch("/id/patch-user/:id",patchUserByID)
+
+router.patch("/email/patch-user",patchUserByEmail)
+
+router.delete("/email/delete-user",deleteUserByEmail)
 
 export default router;
