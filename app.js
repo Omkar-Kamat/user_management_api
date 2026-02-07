@@ -2,7 +2,6 @@ import express from "express"
 import userRouter from "./routes/user.routes.js"
 import dotenv from "dotenv"
 import connectDB from "./config/db.js"
-connectDB
 
 dotenv.config()
 
