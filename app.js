@@ -1,7 +1,9 @@
 import express from "express"
 import userRouter from "./routes/user.routes.js"
+import postRouter from "./routes/post.router.js"
 import dotenv from "dotenv"
 import connectDB from "./config/db.js"
+
 
 dotenv.config()
 
@@ -19,6 +21,7 @@ app.get("/",(req,res)=>{
 
 // MOUNT ROUTER
 app.use("/api/users",userRouter);
+app.use("/api/posts",postRouter);
 
 
 export default app;
